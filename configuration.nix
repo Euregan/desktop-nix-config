@@ -118,6 +118,7 @@ in
     discord
     nodejs
     terminator
+    vscode-fhs
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -154,14 +155,14 @@ in
     localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
   };
 
-  programs.vscode = {
-    enable = true;
-    package = pkgs.vscode.fhs;
-    extensions = with pkgs.vscode-extensions; [
-      dbaeumer.vscode-eslint
-      esbenp.prettier-vscode
-    ];
-  };
+  # programs.vscode = {
+  #   enable = true;
+  #   package = pkgs.vscode.fhs;
+  #   extensions = with pkgs.vscode-extensions; [
+  #     dbaeumer.vscode-eslint
+  #     esbenp.prettier-vscode
+  #   ];
+  # };
 
   programs.git = {
     enable = true;
