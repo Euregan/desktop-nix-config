@@ -127,6 +127,7 @@ in
     nodejs
     terminator
     vscode-fhs
+    filezilla
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
