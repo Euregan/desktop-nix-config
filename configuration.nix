@@ -103,6 +103,7 @@ in
     description = "Valentin";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
+      mongodb-compass
     #  thunderbird
     ];
   };
