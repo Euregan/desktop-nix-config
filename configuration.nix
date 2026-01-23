@@ -104,7 +104,7 @@ in
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
       mongodb-compass
-    #  thunderbird
+      mongodb-cli
     ];
   };
 
