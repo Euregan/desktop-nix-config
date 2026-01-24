@@ -105,6 +105,7 @@ in
     packages = with pkgs; [
       mongodb-compass
       mongodb-cli
+      steamtinkerlaunch
     ];
   };
 
