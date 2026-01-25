@@ -106,6 +106,7 @@ in
       mongodb-compass
       mongodb-cli
       steamtinkerlaunch
+      signal-desktop
     ];
   };
 
