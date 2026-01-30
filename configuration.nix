@@ -107,6 +107,7 @@ in
       mongodb-cli
       steamtinkerlaunch
       signal-desktop
+      openvpn
     ];
   };
 
