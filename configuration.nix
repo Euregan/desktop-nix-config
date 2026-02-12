@@ -108,6 +108,8 @@ in
       steamtinkerlaunch
       signal-desktop
       openvpn
+      nmap
+      godot-mono
     ];
   };
 
