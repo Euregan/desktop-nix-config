@@ -110,6 +110,8 @@ in
       openvpn
       nmap
       godot-mono
+      chromium
+      dotnet-sdk_10
     ];
   };
 
