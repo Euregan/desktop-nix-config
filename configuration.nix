@@ -111,7 +111,7 @@ in
       nmap
       godot-mono
       chromium
-      dotnet-sdk_10
+      dotnet-sdk_8
     ];
   };
 
