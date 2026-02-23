@@ -112,6 +112,7 @@ in
       godot-mono
       chromium
       dotnet-sdk_8
+      claude-code
     ];
   };
 
