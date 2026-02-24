@@ -97,6 +97,9 @@ in
     monospace = [ "Fira Code" ];
   };
 
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = true;
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.valentin = {
     isNormalUser = true;
@@ -112,7 +115,7 @@ in
       godot-mono
       chromium
       dotnet-sdk_8
-      claude-code
+      (import (fetchTarball "channel:nixos-unstable") { config = config.nixpkgs.config; }).claude-code
     ];
   };
 
@@ -122,9 +125,6 @@ in
 
   # Install firefox.
   programs.firefox.enable = true;
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
