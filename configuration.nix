@@ -114,6 +114,7 @@ in
       godot-mono
       chromium
       dotnet-sdk_8
+      vlc
       (import (fetchTarball "channel:nixos-unstable") { config = config.nixpkgs.config; }).claude-code
       (import (fetchTarball "channel:nixos-unstable") { config = config.nixpkgs.config; }).vscode-fhs
       (import (fetchTarball "channel:nixos-unstable") { config = config.nixpkgs.config; }).discord
