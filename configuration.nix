@@ -109,13 +109,15 @@ in
       mongodb-compass
       mongodb-cli
       steamtinkerlaunch
-      signal-desktop
       openvpn
       nmap
       godot-mono
       chromium
       dotnet-sdk_8
       (import (fetchTarball "channel:nixos-unstable") { config = config.nixpkgs.config; }).claude-code
+      (import (fetchTarball "channel:nixos-unstable") { config = config.nixpkgs.config; }).vscode-fhs
+      (import (fetchTarball "channel:nixos-unstable") { config = config.nixpkgs.config; }).discord
+      (import (fetchTarball "channel:nixos-unstable") { config = config.nixpkgs.config; }).signal-desktop
     ];
   };
 
@@ -131,10 +133,8 @@ in
   environment.systemPackages = with pkgs; [
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
-    discord
     nodejs
     terminator
-    vscode-fhs
     filezilla
     jellyfin
     jellyfin-web
