@@ -6,6 +6,11 @@
 
 let
   home-manager = builtins.fetchTarball https://github.com/nix-community/home-manager/archive/release-25.11.tar.gz;
+  shadps4 = pkgs.callPackage ./pkgs/shadps4.nix { };
+  shadps4-qt = pkgs.callPackage ./pkgs/shadps4-qt.nix {
+    qt6 = pkgs.qt6;
+  };
+  pkginstall = pkgs.callPackage ./pkgs/pkginstall.nix { };
 in
 {
   imports =
@@ -115,10 +120,14 @@ in
       chromium
       dotnet-sdk_8
       vlc
+      (import (fetchTarball "channel:nixos-unstable") { config = config.nixpkgs.config; }).protonplus
       (import (fetchTarball "channel:nixos-unstable") { config = config.nixpkgs.config; }).claude-code
       (import (fetchTarball "channel:nixos-unstable") { config = config.nixpkgs.config; }).vscode-fhs
       (import (fetchTarball "channel:nixos-unstable") { config = config.nixpkgs.config; }).discord
       (import (fetchTarball "channel:nixos-unstable") { config = config.nixpkgs.config; }).signal-desktop
+      shadps4
+      shadps4-qt
+      pkginstall
     ];
   };
 
