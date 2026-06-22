@@ -128,6 +128,7 @@ in
       shadps4
       shadps4-qt
       pkginstall
+      pnpm
     ];
   };
 
