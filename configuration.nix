@@ -142,15 +142,24 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
     nodejs
     terminator
     filezilla
     jellyfin
     jellyfin-web
     jellyfin-ffmpeg
+
+    pciutils      # lspci
+    nethogs       # NetHogs
+    iw            # iwconfig/iw
+    iotop         # iotop
+    libgtop       # GTop
+    gnomeExtensions.astra-monitor
   ];
+
+  environment.sessionVariables = {
+    GI_TYPELIB_PATH = "${pkgs.libgtop}/lib/girepository-1.0";
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
