@@ -22,6 +22,20 @@ in
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.systemd-boot.memtest86.enable = true;
+
+  # cpu8/cpu9 (P-core 4) is causing segfaults across unrelated processes,
+  # consistent with Raptor Lake degradation. Offline it until RMA'd or the
+  # BIOS baseline power profile proves sufficient on its own.
+  systemd.services.disable-degraded-core = {
+    description = "Offline degraded P-core (logical CPUs 8-9)";
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = "${pkgs.bash}/bin/bash -c 'echo 0 > /sys/devices/system/cpu/cpu8/online; echo 0 > /sys/devices/system/cpu/cpu9/online'";
+    };
+  };
 
   networking.hostName = "nixos"; # Define your hostname.
   networking.nameservers = [ "8.8.8.8" "2001:4860:4860::8888" ];
