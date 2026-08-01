@@ -173,6 +173,9 @@ in
 
   environment.sessionVariables = {
     GI_TYPELIB_PATH = "${pkgs.libgtop}/lib/girepository-1.0";
+    # Firefox's native-Wayland/PipeWire screen share has a damage-tracking bug on
+    # GNOME/NVIDIA that leaves black tiles until the mouse moves. XWayland doesn't.
+    MOZ_ENABLE_WAYLAND = "0";
   };
 
   # Some programs need SUID wrappers, can be configured further or are
