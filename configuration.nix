@@ -25,17 +25,12 @@ in
   boot.loader.systemd-boot.memtest86.enable = true;
 
   # cpu8/cpu9 (P-core 4) is causing segfaults across unrelated processes,
-  # consistent with Raptor Lake degradation. Offline it until RMA'd or the
-  # BIOS baseline power profile proves sufficient on its own.
-  systemd.services.disable-degraded-core = {
-    description = "Offline degraded P-core (logical CPUs 8-9)";
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      ExecStart = "${pkgs.bash}/bin/bash -c 'echo 0 > /sys/devices/system/cpu/cpu8/online; echo 0 > /sys/devices/system/cpu/cpu9/online'";
-    };
-  };
+  # consistent with Raptor Lake degradation. Keep the scheduler off it until
+  # RMA'd or the BIOS baseline power profile proves sufficient on its own.
+  # isolcpus (rather than hot-unplugging the core) keeps it visibly online so
+  # topology-sensitive software doesn't choke on a gap in the online-CPU set
+  # (Deadlock hung on startup when cpu8/cpu9 were fully offlined).
+  boot.kernelParams = [ "isolcpus=8,9" ];
 
   networking.hostName = "nixos"; # Define your hostname.
   networking.nameservers = [ "8.8.8.8" "2001:4860:4860::8888" ];
