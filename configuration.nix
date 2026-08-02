@@ -242,4 +242,11 @@ in
     enable = true;
     setSocketVariable = true;
   };
+
+  # CDI-based GPU passthrough for rootless Docker. `virtualisation.docker.
+  # enableNvidia` (legacy nvidia-container-runtime wiring) only patches the
+  # rootful docker daemon settings in this NixOS module — CDI is the
+  # supported path for rootless. This generates the CDI spec on boot/udev
+  # and turns on `features.cdi` for the rootless docker daemon.
+  hardware.nvidia-container-toolkit.enable = true;
 }
