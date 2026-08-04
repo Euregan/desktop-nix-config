@@ -11,6 +11,32 @@ let
     qt6 = pkgs.qt6;
   };
   pkginstall = pkgs.callPackage ./pkgs/pkginstall.nix { };
+
+  # Wraps the real firefox binary in a systemd scope so a runaway tab/leak
+  # gets OOM-killed within its own cgroup instead of pressuring the rest of
+  # the session. Wrapping the binary (not just the .desktop Exec) covers
+  # every launch path — dash, xdg-open, terminal, keyboard shortcuts — since
+  # they all resolve plain `firefox` off PATH.
+  #
+  # `override` is re-implemented (recursing through wrapMemLimited) because
+  # the programs.firefox module unconditionally calls `cfg.package.override`
+  # to inject its prefs/policies files, which a plain symlinkJoin result
+  # doesn't support.
+  wrapMemLimited = pkg: pkgs.symlinkJoin {
+    name = "firefox-memlimited-${pkg.version}";
+    paths = [ pkg ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      rm $out/bin/firefox
+      makeWrapper ${pkgs.systemd}/bin/systemd-run $out/bin/firefox \
+        --add-flags "--user --scope -p MemoryMax=16G -p MemorySwapMax=0 --collect --" \
+        --add-flags "${pkg}/bin/firefox"
+    '';
+  } // {
+    inherit (pkg) version;
+    override = newArgs: wrapMemLimited (pkg.override newArgs);
+  };
+  firefox-memlimited = wrapMemLimited pkgs.firefox;
 in
 {
   imports =
@@ -147,6 +173,7 @@ in
 
   # Install firefox.
   programs.firefox.enable = true;
+  programs.firefox.package = firefox-memlimited;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -168,9 +195,9 @@ in
 
   environment.sessionVariables = {
     GI_TYPELIB_PATH = "${pkgs.libgtop}/lib/girepository-1.0";
-    # Firefox's native-Wayland/PipeWire screen share has a damage-tracking bug on
-    # GNOME/NVIDIA that leaves black tiles until the mouse moves. XWayland doesn't.
-    MOZ_ENABLE_WAYLAND = "0";
+    # Firefox's native-Wayland/PipeWire screen share has a DMA-BUF damage-tracking
+    # bug on GNOME/NVIDIA that leaves black tiles until the mouse moves.
+    MOZ_DISABLE_DMABUF = "1";
   };
 
   # Some programs need SUID wrappers, can be configured further or are
