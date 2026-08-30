@@ -71,6 +71,26 @@ in
   # thrashing/freeze.
   zramSwap.enable = true;
 
+  nix.gc = {
+    automatic = true;
+    dates = "daily";
+    options = "--delete-older-than 7d";
+  };
+
+  # GC deletes old generations' store paths but never touches the
+  # systemd-boot menu, so entries for GC'd generations would otherwise
+  # linger until the next manual rebuild. OnSuccess chains a resync
+  # right after GC finishes.
+  systemd.services.nix-gc.unitConfig.OnSuccess = [ "boot-menu-resync.service" ];
+
+  systemd.services.boot-menu-resync = {
+    description = "Resync systemd-boot menu entries after Nix GC";
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "/run/current-system/bin/switch-to-configuration boot";
+    };
+  };
+
   networking.hostName = "nixos"; # Define your hostname.
   networking.nameservers = [ "8.8.8.8" "2001:4860:4860::8888" ];
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
