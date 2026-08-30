@@ -182,6 +182,7 @@ in
       mongodb-compass
       mongodb-cli
       steamtinkerlaunch
+      protontricks
       openvpn
       nmap
       godot-mono
