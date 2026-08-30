@@ -12,11 +12,19 @@ let
   };
   pkginstall = pkgs.callPackage ./pkgs/pkginstall.nix { };
 
-  # Wraps the real firefox binary in a systemd scope so a runaway tab/leak
-  # gets OOM-killed within its own cgroup instead of pressuring the rest of
-  # the session. Wrapping the binary (not just the .desktop Exec) covers
-  # every launch path — dash, xdg-open, terminal, keyboard shortcuts — since
-  # they all resolve plain `firefox` off PATH.
+  # Wraps the real firefox binary in a resource-limited cgroup so a runaway
+  # tab/leak gets OOM-killed within its own cgroup instead of pressuring the
+  # rest of the session. Wrapping the binary (not just the .desktop Exec)
+  # covers every launch path — dash, xdg-open, terminal, keyboard shortcuts —
+  # since they all resolve plain `firefox` off PATH.
+  #
+  # Runs as a transient *service*, not `--scope`: systemd refuses to nest a
+  # scope under another scope, and GNOME's own app launcher (dash/Activities)
+  # already wraps every app it starts in its own app-gnome-<name>-<pid>.scope
+  # before this wrapper ever runs — a --scope-based wrapper silently landed
+  # Firefox back in GNOME's unconstrained scope instead of a new one.
+  # --pipe --wait keeps this process blocking with forwarded stdio so GNOME
+  # still sees a normal foreground launch.
   #
   # `override` is re-implemented (recursing through wrapMemLimited) because
   # the programs.firefox module unconditionally calls `cfg.package.override`
@@ -29,7 +37,7 @@ let
     postBuild = ''
       rm $out/bin/firefox
       makeWrapper ${pkgs.systemd}/bin/systemd-run $out/bin/firefox \
-        --add-flags "--user --scope -p MemoryMax=16G -p MemorySwapMax=0 --collect --" \
+        --add-flags "--user --pipe --wait -p MemoryMax=16G -p MemorySwapMax=0 --collect --" \
         --add-flags "${pkg}/bin/firefox"
     '';
   } // {
@@ -57,6 +65,11 @@ in
   # topology-sensitive software doesn't choke on a gap in the online-CPU set
   # (Deadlock hung on startup when cpu8/cpu9 were fully offlined).
   boot.kernelParams = [ "isolcpus=8,9" ];
+
+  # No disk swap is configured; zram gives memory pressure somewhere to go
+  # (e.g. a leaking browser tab) instead of the system going straight into
+  # thrashing/freeze.
+  zramSwap.enable = true;
 
   networking.hostName = "nixos"; # Define your hostname.
   networking.nameservers = [ "8.8.8.8" "2001:4860:4860::8888" ];
