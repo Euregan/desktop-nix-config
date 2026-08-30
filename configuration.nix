@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   home-manager = builtins.fetchTarball https://github.com/nix-community/home-manager/archive/release-25.11.tar.gz;
@@ -297,6 +297,18 @@ in
     enable = true;
     setSocketVariable = true;
   };
+
+  # The rootless docker user unit is `wantedBy default.target`, so it starts
+  # for every systemd user session — including GDM's ephemeral
+  # "gdm-greeter" account, which has no subuid/subgid range and crash-loops
+  # on every boot. Restrict it to the real interactive user.
+  systemd.user.services.docker.unitConfig.ConditionUser = lib.mkForce "valentin";
+
+  # docker.service ships with Wants=network-online.target, which pulls in
+  # NetworkManager-wait-online.service (multi-second wait for confirmed
+  # connectivity) before docker can start. Containers here don't need
+  # network reachable that early.
+  systemd.services."NetworkManager-wait-online".enable = false;
 
   # CDI-based GPU passthrough for rootless Docker. `virtualisation.docker.
   # enableNvidia` (legacy nvidia-container-runtime wiring) only patches the
