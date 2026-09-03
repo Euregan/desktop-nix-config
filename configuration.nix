@@ -71,18 +71,31 @@ in
   # thrashing/freeze.
   zramSwap.enable = true;
 
+  # Nix's built-in nix.gc only supports age-based retention
+  # (--delete-older-than); there's no count-based equivalent. To keep a
+  # fixed number of generations instead, trim generations by count with
+  # `nix-env --delete-generations +N` before collecting garbage, still on
+  # nix.gc's normal daily schedule.
+  boot.loader.systemd-boot.configurationLimit = 5;
+
   nix.gc = {
     automatic = true;
     dates = "daily";
-    options = "--delete-older-than 7d";
+  };
+
+  systemd.services.nix-gc = {
+    description = lib.mkForce "Nix garbage collection (keep last 5 generations)";
+    script = lib.mkForce ''
+      ${config.nix.package}/bin/nix-env -p /nix/var/nix/profiles/system --delete-generations +5
+      ${config.nix.package}/bin/nix-collect-garbage
+    '';
+    unitConfig.OnSuccess = [ "boot-menu-resync.service" ];
   };
 
   # GC deletes old generations' store paths but never touches the
   # systemd-boot menu, so entries for GC'd generations would otherwise
   # linger until the next manual rebuild. OnSuccess chains a resync
   # right after GC finishes.
-  systemd.services.nix-gc.unitConfig.OnSuccess = [ "boot-menu-resync.service" ];
-
   systemd.services.boot-menu-resync = {
     description = "Resync systemd-boot menu entries after Nix GC";
     serviceConfig = {
