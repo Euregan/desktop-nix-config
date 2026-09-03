@@ -11,6 +11,7 @@ let
     qt6 = pkgs.qt6;
   };
   pkginstall = pkgs.callPackage ./pkgs/pkginstall.nix { };
+  hey-cli = pkgs.callPackage ./pkgs/hey-cli.nix { };
 
   # Wraps the real firefox binary in a resource-limited cgroup so a runaway
   # tab/leak gets OOM-killed within its own cgroup instead of pressuring the
@@ -231,6 +232,7 @@ in
     jellyfin
     jellyfin-web
     jellyfin-ffmpeg
+    hey-cli
 
     pciutils      # lspci
     nethogs       # NetHogs
