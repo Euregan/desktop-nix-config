@@ -210,7 +210,7 @@ in
       vlc
       (import (fetchTarball "channel:nixos-unstable") { config = config.nixpkgs.config; }).protonplus
       (import (fetchTarball "channel:nixos-unstable") { config = config.nixpkgs.config; }).claude-code
-      (import (fetchTarball "channel:nixos-unstable") { config = config.nixpkgs.config; }).vscode-fhs
+      vscode-fhs
       (import (fetchTarball "channel:nixos-unstable") { config = config.nixpkgs.config; }).discord
       (import (fetchTarball "channel:nixos-unstable") { config = config.nixpkgs.config; }).signal-desktop
       shadps4
