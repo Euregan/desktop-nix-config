@@ -155,7 +155,7 @@ in
   # Allow nvidia drivers to be used
   hardware.graphics.enable = true;
   services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.nvidia.open = true;
+  hardware.nvidia.open = false;
 
   # Configure console keymap
   console.keyMap = "us-acentos";
