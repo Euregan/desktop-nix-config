@@ -6,10 +6,6 @@
 
 let
   home-manager = builtins.fetchTarball https://github.com/nix-community/home-manager/archive/release-25.11.tar.gz;
-  shadps4 = pkgs.callPackage ./pkgs/shadps4.nix { };
-  shadps4-qt = pkgs.callPackage ./pkgs/shadps4-qt.nix {
-    qt6 = pkgs.qt6;
-  };
   pkginstall = pkgs.callPackage ./pkgs/pkginstall.nix { };
   hey-cli = pkgs.callPackage ./pkgs/hey-cli.nix { };
   # crates.io currently 403s the plain-curl fetches nixpkgs 25.11 makes while
@@ -213,8 +209,6 @@ in
       vscode-fhs
       (import (fetchTarball "channel:nixos-unstable") { config = config.nixpkgs.config; }).discord
       (import (fetchTarball "channel:nixos-unstable") { config = config.nixpkgs.config; }).signal-desktop
-      shadps4
-      shadps4-qt
       pkginstall
       pnpm
       ytkew
