@@ -8,11 +8,6 @@ let
   home-manager = builtins.fetchTarball https://github.com/nix-community/home-manager/archive/release-25.11.tar.gz;
   pkginstall = pkgs.callPackage ./pkgs/pkginstall.nix { };
   hey-cli = pkgs.callPackage ./pkgs/hey-cli.nix { };
-  # crates.io currently 403s the plain-curl fetches nixpkgs 25.11 makes while
-  # vendoring a new Rust package's dependencies; nixos-unstable's
-  # fetchCargoVendor already sends the identifying User-Agent crates.io now
-  # requires (nixpkgs#512735), so build ytkew against that instead.
-  ytkew = (import (fetchTarball "channel:nixos-unstable") { config = config.nixpkgs.config; }).callPackage ./pkgs/ytkew.nix { };
 
   # Wraps the real firefox binary in a resource-limited cgroup so a runaway
   # tab/leak gets OOM-killed within its own cgroup instead of pressuring the
@@ -211,7 +206,6 @@ in
       (import (fetchTarball "channel:nixos-unstable") { config = config.nixpkgs.config; }).signal-desktop
       pkginstall
       pnpm
-      ytkew
     ];
   };
 
